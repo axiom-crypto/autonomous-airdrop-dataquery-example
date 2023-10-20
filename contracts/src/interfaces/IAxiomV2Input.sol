@@ -9,8 +9,10 @@ interface IAxiomV2Input {
         bytes32 dataQueryHash;
         IAxiomV2Query.AxiomV2ComputeQuery computeQuery;
         IAxiomV2Query.AxiomV2Callback callback;
+        bytes32 userSalt;
         uint64 maxFeePerGas;
         uint32 callbackGasLimit;
+        address refundee;
         bytes dataQuery;
     }
 }

@@ -11,7 +11,7 @@ import { AxiomV2Decoder } from './libraries/AxiomV2Decoder.sol';
 contract AutonomousAirdrop is AxiomV2Client, Ownable {
     event ClaimAirdrop(
         address indexed user,
-        bytes32 indexed queryHash,
+        uint256 indexed queryId,
         uint256 numTokens,
         bytes32[] axiomResults
     );
@@ -67,19 +67,21 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
         require(!hasClaimed[msg.sender], "User has already claimed this airdrop");
         require(!querySubmitted[msg.sender], "Query has already been submitted");
 
-        address user = abi.decode(axiomData.callback.callbackExtraData, (address));
-        require(user == msg.sender, "Address sent in callbackExtraData must be the same as the caller");
+        address user = abi.decode(axiomData.callback.extraData, (address));
+        require(user == msg.sender, "Address sent in extraData must be the same as the caller");
 
         _validateDataQuery(axiomData.dataQuery);
-        
+
         querySubmitted[msg.sender] = true;
-        bytes32 queryHash = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
+        uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
             axiomData.sourceChainId,
             axiomData.dataQueryHash,
             axiomData.computeQuery,
             axiomData.callback,
+            axiomData.userSalt,
             axiomData.maxFeePerGas,
             axiomData.callbackGasLimit,
+            axiomData.refundee,
             axiomData.dataQuery
         );
     }
@@ -88,12 +90,12 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
         uint64 sourceChainId,
         address callerAddr,
         bytes32 querySchema,
-        bytes32 queryHash,
+        uint256 queryId,
         bytes32[] calldata axiomResults,
-        bytes calldata callbackExtraData
+        bytes calldata extraData
     ) internal virtual override {
-        // Parse the submitted user address from the callbackExtraData
-        address user = abi.decode(callbackExtraData, (address));
+        // Parse the submitted user address from the extraData
+        address user = abi.decode(extraData, (address));
 
         // Parse results
         bytes32 eventSchema = axiomResults[0];
@@ -109,7 +111,7 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
                 "Invalid event schema"
             );
             return;
-        } 
+        }
         if (userEventAddress != user) {
             querySubmitted[user] = false;
             emit ClaimAirdropError(
@@ -142,7 +144,7 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
 
         emit ClaimAirdrop(
             user,
-            queryHash,
+            queryId,
             numTokens,
             axiomResults
         );
@@ -158,17 +160,20 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
 
         // Validate that this query is only for the chain that this contract is deployed on
         require(header.sourceChainId == block.chainid, "DataQuery sourceChainId be the same as the deployed contract's chainId");
-        
+
         // Check that the types for all of the incoming Subqueries are correct
         require(receiptSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
         require(receiptSq1.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
         require(receiptSq2.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
         require(txSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Tx), "txSq0.subqueryType must be 4");
 
-        // Check txHashes for all Receipt and Tx Subqueries match
-        require(keccak256(abi.encode(receiptSq0.txHash)) == keccak256(abi.encode(receiptSq1.txHash)), "txHashes[0,1] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq1.txHash)) == keccak256(abi.encode(receiptSq2.txHash)), "txHashes[1,2] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq2.txHash)) == keccak256(abi.encode(txSq0.txHash)), "txHashes[3,4] for dataQuery do not match");
+        // Check block number and tx indexes for all Receipt and Tx Subqueries match
+        require(keccak256(abi.encode(receiptSq0.blockNumber)) == keccak256(abi.encode(receiptSq1.blockNumber)), "blockNumber[0,1] for dataQuery do not match");
+        require(keccak256(abi.encode(receiptSq1.blockNumber)) == keccak256(abi.encode(receiptSq2.blockNumber)), "blockNumber[1,2] for dataQuery do not match");
+        require(keccak256(abi.encode(receiptSq2.blockNumber)) == keccak256(abi.encode(txSq0.blockNumber)), "blockNumber[3,4] for dataQuery do not match");
+        require(keccak256(abi.encode(receiptSq0.txIdx)) == keccak256(abi.encode(receiptSq1.txIdx)), "txIdx[0,1] for dataQuery do not match");
+        require(keccak256(abi.encode(receiptSq1.txIdx)) == keccak256(abi.encode(receiptSq2.txIdx)), "txIdx[1,2] for dataQuery do not match");
+        require(keccak256(abi.encode(receiptSq2.txIdx)) == keccak256(abi.encode(txSq0.txIdx)), "txIdx[3,4] for dataQuery do not match");
     }
 
     function _validateAxiomV2Call(

@@ -39,13 +39,15 @@ library AxiomV2Decoder {
 
     struct TxSubquery {
         uint16 subqueryType;
-        bytes32 txHash;
+        uint32 blockNumber;
+        uint16 txIdx;
         uint32 fieldOrCalldataIdx;
     }
 
     struct ReceiptSubquery {
         uint16 subqueryType;
-        bytes32 txHash;
+        uint32 blockNumber;
+        uint16 txIdx;
         uint32 fieldOrLogIdx;
         uint32 topicOrDataOrAddressIdx;
         bytes32 eventSchema;
@@ -60,52 +62,103 @@ library AxiomV2Decoder {
         bytes32[] keys;
     }
 
-    function decodeDataQueryHeader(bytes calldata query) internal pure returns (DataQueryHeader memory, bytes calldata) {
+function decodeDataQueryHeader(
+        bytes calldata query
+    ) internal pure returns (DataQueryHeader memory, bytes calldata) {
         uint64 sourceChainId = uint64(bytes8(query[0:8]));
         uint16 subqueryLen = uint16(bytes2(query[8:10]));
-        return (DataQueryHeader(sourceChainId, subqueryLen), query[10:]);
+        return (DataQueryHeader(
+            sourceChainId,
+            subqueryLen),
+            query[10:]
+        );
     }
 
-    function decodeHeaderSubquery(bytes calldata query) internal pure returns (HeaderSubquery memory, bytes calldata) {
+    function decodeHeaderSubquery(
+        bytes calldata query
+    ) internal pure returns (HeaderSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
         uint32 blockNumber = uint32(bytes4(query[2:6]));
         uint32 fieldIdx = uint32(bytes4(query[6:10]));
-        return (HeaderSubquery(subqueryType, blockNumber, fieldIdx), query[10:]);
+        return (HeaderSubquery(
+            subqueryType,
+            blockNumber,
+            fieldIdx),
+            query[10:]
+        );
     }
 
-    function decodeAccountSubquery(bytes calldata query) internal pure returns (AccountSubquery memory, bytes calldata) {
+    function decodeAccountSubquery(
+        bytes calldata query
+    ) internal pure returns (AccountSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
         uint32 blockNumber = uint32(bytes4(query[2:6]));
         address addr = address(bytes20(query[6:26]));
         uint32 fieldIdx = uint32(bytes4(query[26:30]));
-        return (AccountSubquery(subqueryType, blockNumber, addr, fieldIdx), query[30:]);
+        return (AccountSubquery(
+            subqueryType,
+            blockNumber,
+            addr,
+            fieldIdx),
+            query[30:]
+        );
     }
 
-    function decodeStorageSubquery(bytes calldata query) internal pure returns (StorageSubquery memory, bytes calldata) {
+    function decodeStorageSubquery(
+        bytes calldata query
+    ) internal pure returns (StorageSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
         uint32 blockNumber = uint32(bytes4(query[2:6]));
         address addr = address(bytes20(query[6:26]));
         uint256 slot = uint256(bytes32(query[26:58]));
-        return (StorageSubquery(subqueryType, blockNumber, addr, slot), query[58:]);
+        return (StorageSubquery(
+            subqueryType,
+            blockNumber,
+            addr,
+            slot),
+            query[58:]
+        );
     }
 
-    function decodeTxSubquery(bytes calldata query) internal pure returns (TxSubquery memory, bytes calldata) {
+    function decodeTxSubquery(
+        bytes calldata query
+    ) internal pure returns (TxSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
-        bytes32 txHash = bytes32(query[2:34]);
-        uint32 fieldOrCalldataIdx = uint32(bytes4(query[34:38]));
-        return (TxSubquery(subqueryType, txHash, fieldOrCalldataIdx), query[38:]);
+        uint32 blockNumber = uint32(bytes4(query[2:6]));
+        uint16 txIdx = uint16(bytes2(query[6:8]));
+        uint32 fieldOrCalldataIdx = uint32(bytes4(query[8:12]));
+        return (TxSubquery(
+            subqueryType,
+            blockNumber,
+            txIdx,
+            fieldOrCalldataIdx),
+            query[12:]
+        );
     }
 
-    function decodeReceiptSubquery(bytes calldata query) internal pure returns (ReceiptSubquery memory, bytes calldata) {
+    function decodeReceiptSubquery(
+        bytes calldata query
+    ) internal pure returns (ReceiptSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
-        bytes32 txHash = bytes32(query[2:34]);
-        uint32 fieldOrLogIdx = uint32(bytes4(query[34:38]));
-        uint32 topicOrDataOrAddressIdx = uint32(bytes4(query[38:42]));
-        bytes32 eventSchema = bytes32(query[42:74]);
-        return (ReceiptSubquery(subqueryType, txHash, fieldOrLogIdx, topicOrDataOrAddressIdx, eventSchema), query[74:]);
+        uint32 blockNumber = uint32(bytes4(query[2:6]));
+        uint16 txIdx = uint16(bytes2(query[6:8]));
+        uint32 fieldOrLogIdx = uint32(bytes4(query[8:12]));
+        uint32 topicOrDataOrAddressIdx = uint32(bytes4(query[12:16]));
+        bytes32 eventSchema = bytes32(query[16:48]);
+        return (ReceiptSubquery(
+            subqueryType,
+            blockNumber,
+            txIdx,
+            fieldOrLogIdx,
+            topicOrDataOrAddressIdx,
+            eventSchema),
+            query[48:]
+        );
     }
 
-    function decodeSolidityNestedMappingSubquery(bytes calldata query) internal pure returns (SolidityNestedMappingSubquery memory, bytes calldata) {
+    function decodeSolidityNestedMappingSubquery(
+        bytes calldata query
+    ) internal pure returns (SolidityNestedMappingSubquery memory, bytes calldata) {
         uint16 subqueryType = uint16(bytes2(query[0:2]));
         uint32 blockNumber = uint32(bytes4(query[2:6]));
         address addr = address(bytes20(query[6:26]));
@@ -117,6 +170,14 @@ library AxiomV2Decoder {
             keys[i] = bytes32(query[offset:offset+32]);
             offset += 32;
         }
-        return (SolidityNestedMappingSubquery(subqueryType, blockNumber, addr, mappingSlot, mappingDepth, keys), query[offset:]);
-    }   
+        return (SolidityNestedMappingSubquery(
+            subqueryType,
+            blockNumber,
+            addr,
+            mappingSlot,
+            mappingDepth,
+            keys),
+            query[offset:]
+        );
+    }
 }
