@@ -10,7 +10,7 @@ import { formatEther, parseEther } from "viem";
 import Link from "next/link";
 
 export default function ClaimAirdropClient(
-  { abi, builtQuery, payment }:{
+  { abi, builtQuery, payment }: {
     abi: any[],
     builtQuery: BuiltQueryV2,
     payment: string,
@@ -25,8 +25,10 @@ export default function ClaimAirdropClient(
     builtQuery.dataQueryHash,
     builtQuery.computeQuery,
     builtQuery.callback,
+    builtQuery.userSalt,
     builtQuery.maxFeePerGas,
     builtQuery.callbackGasLimit,
+    address,
     builtQuery.dataQuery
   ];
 
@@ -53,7 +55,7 @@ export default function ClaimAirdropClient(
     if (isSuccess) {
       setTimeout(() => {
         setShowExplorerLink(true);
-      }, 15000); 
+      }, 15000);
     }
   }, [isSuccess, setShowExplorerLink]);
 
@@ -64,7 +66,7 @@ export default function ClaimAirdropClient(
   const proofValidationFailedAction = useCallback(() => {
     router.push(`fail/?address=${address}`);
   }, [router, address]);
-  
+
   // Monitor contract for `ClaimAirdrop` or `ClaimAirdropError` events
   useContractEvent({
     address: Constants.AUTO_AIRDROP_ADDR as `0x${string}`,
@@ -110,7 +112,7 @@ export default function ClaimAirdropClient(
       return null;
     }
     return (
-      <Link href={`${Constants.EXPLORER_BASE_URL}${builtQuery.queryHash}`} target="_blank">
+      <Link href={`https://explorer.axiom.xyz/v2/goerli`} target="_blank">
         View status on Axiom Explorer
       </Link>
     )
@@ -122,13 +124,13 @@ export default function ClaimAirdropClient(
         disabled={isLoading || isSuccess || !!hasClaimed}
         onClick={() => write?.()}
       >
-        { renderButtonText() }
+        {renderButtonText()}
       </Button>
       <div className="flex flex-col items-center text-sm gap-2">
         <div>
-          { isSuccess ? "Proof generation may take up to 3 minutes" : renderClaimProofText() }
+          {isSuccess ? "Proof generation may take up to 3 minutes" : renderClaimProofText()}
         </div>
-        { renderExplorerLink() }
+        {renderExplorerLink()}
       </div>
     </div>
   )

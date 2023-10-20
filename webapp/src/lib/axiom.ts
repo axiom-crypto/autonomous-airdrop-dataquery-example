@@ -7,7 +7,6 @@ import {
   HeaderSubquery,
   QueryV2,
   TxField,
-  TxType,
   buildHeaderSubquery,
   buildReceiptSubquery,
   buildTxSubquery,
@@ -24,11 +23,12 @@ export const buildAxiomQuery = async (
   if (!address || !txHash || !blockNumber || !logIdx) {
     throw new Error("Invalid Uniswap V2 `Swap` event");
   }
-  
+
   const config: AxiomConfig = {
     providerUri: process.env.PROVIDER_URI_GOERLI as string,
     version: "v2",
     chainId: 5,
+    mock: true,
   }
   const axiom = new Axiom(config);
   const query = (axiom.query as QueryV2).new();
@@ -57,22 +57,12 @@ export const buildAxiomQuery = async (
   // Append a Transaction Subquery that gets the `to` field of the transaction
   let txSubquery = buildTxSubquery(txHash)
     .field(TxField.To)
-    .type(TxType.Eip1559);
   console.log(txSubquery);
   query.appendDataSubquery(txSubquery);
 
-// Because each Query with the same subqueries can only be proven once, we are also 
-// adding this random data subquery to this public example to ensure that everyone 
-// who is using this Quickstart example can generate a proof
-  const randomGoerliBlock = Math.floor(Math.random() * 9700000);
-  const headerSubquery: HeaderSubquery = buildHeaderSubquery(randomGoerliBlock)
-    .field(HeaderField.Number);
-  query.appendDataSubquery(headerSubquery);
-
   const callback: AxiomV2Callback = {
-    callbackAddr: Constants.AUTO_AIRDROP_ADDR,
-    callbackFunctionSelector: getFunctionSelector("axiomV2Callback(uint64,address,bytes32,bytes32,bytes32[],bytes)"),
-    callbackExtraData: bytes32(address),
+    target: Constants.AUTO_AIRDROP_ADDR,
+    extraData: bytes32(address),
   }
   query.setCallback(callback);
 
@@ -82,9 +72,9 @@ export const buildAxiomQuery = async (
 
   // Build the Query
   const builtQuery = await query.build();
-  
+
   // Calculate the payment
-  const payment = await query.calculateFee();
+  const payment = query.calculateFee();
 
   return {
     builtQuery,
