@@ -3,15 +3,11 @@ import {
   Axiom,
   AxiomConfig,
   AxiomV2Callback,
-  HeaderField,
-  HeaderSubquery,
   QueryV2,
   TxField,
-  buildHeaderSubquery,
   buildReceiptSubquery,
   buildTxSubquery,
   bytes32,
-  getFunctionSelector,
 } from '@axiom-crypto/experimental';
 
 export const buildAxiomQuery = async (

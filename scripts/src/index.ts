@@ -1,12 +1,8 @@
 import {
-  AccountField,
   Axiom,
   AxiomConfig,
   AxiomV2Callback,
-  HeaderField,
-  HeaderSubquery,
   QueryV2,
-  ReceiptField,
   TxField,
   buildReceiptSubquery,
   buildTxSubquery,
