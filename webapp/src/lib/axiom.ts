@@ -1,4 +1,4 @@
-import { Constants } from '@/shared/constants';
+import { Constants } from "@/shared/constants";
 import {
   Axiom,
   AxiomConfig,
@@ -7,14 +7,14 @@ import {
   TxField,
   buildReceiptSubquery,
   buildTxSubquery,
-  bytes32,
-} from '@axiom-crypto/experimental';
+  bytes32
+} from "@axiom-crypto/core";
 
 export const buildAxiomQuery = async (
   address: string,
   txHash: string,
   blockNumber: number,
-  logIdx: number,
+  logIdx: number
 ) => {
   if (!address || !txHash || !blockNumber || !logIdx) {
     throw new Error("Invalid Uniswap V2 `Swap` event");
@@ -24,8 +24,8 @@ export const buildAxiomQuery = async (
     providerUri: process.env.PROVIDER_URI_GOERLI as string,
     version: "v2",
     chainId: 5,
-    mock: true,
-  }
+    mock: true
+  };
   const axiom = new Axiom(config);
   const query = (axiom.query as QueryV2).new();
 
@@ -46,20 +46,18 @@ export const buildAxiomQuery = async (
   query.appendDataSubquery(receiptSubquery);
 
   // Append a Receipt Subquery that gets the block number of the transaction receipt
-  receiptSubquery = buildReceiptSubquery(txHash)
-    .blockNumber(); // block number of the transaction
+  receiptSubquery = buildReceiptSubquery(txHash).blockNumber(); // block number of the transaction
   query.appendDataSubquery(receiptSubquery);
 
   // Append a Transaction Subquery that gets the `to` field of the transaction
-  let txSubquery = buildTxSubquery(txHash)
-    .field(TxField.To)
+  let txSubquery = buildTxSubquery(txHash).field(TxField.To);
   console.log(txSubquery);
   query.appendDataSubquery(txSubquery);
 
   const callback: AxiomV2Callback = {
     target: Constants.AUTO_AIRDROP_ADDR,
-    extraData: bytes32(address),
-  }
+    extraData: bytes32(address)
+  };
   query.setCallback(callback);
 
   // Validate the Query
@@ -70,10 +68,10 @@ export const buildAxiomQuery = async (
   const builtQuery = await query.build();
 
   // Calculate the payment
-  const payment = query.calculateFee();
+  const payment = await query.calculateFee();
 
   return {
     builtQuery,
-    payment,
+    payment
   };
-}
+};

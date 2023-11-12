@@ -1,7 +1,7 @@
 "use client";
 
 import { Constants } from "@/shared/constants";
-import { BuiltQueryV2 } from "@axiom-crypto/experimental";
+import { BuiltQueryV2 } from "@axiom-crypto/core";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useContractEvent, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
 import Button from "../ui/Button";

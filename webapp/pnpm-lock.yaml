@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@axiom-crypto/experimental':
-    specifier: ^2.2.33
-    version: 2.2.33
+  '@axiom-crypto/core':
+    specifier: ^2.2.50
+    version: 2.2.50
   '@types/node':
     specifier: 20.6.2
     version: 20.6.2
@@ -71,42 +71,41 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@axiom-crypto/experimental@2.2.33:
-    resolution: {integrity: sha512-OhGoiJvOyRENrFomvEMiT/n4ZNwTs76K8sHjpxBe0IaoIOzC5NKFyvSXO278gRCBe+ygnowYfOnPFuDSWtymug==}
+  /@axiom-crypto/core@2.2.50:
+    resolution: {integrity: sha512-SWiTntwZsgpvnsCdGxajcnQ1H6sOil9L6l451B0892gSz1pC/XkyZ61JN+IwgUZFdNhF5B+hFdzK+WaMO7GAbw==}
     dependencies:
-      '@axiom-crypto/halo2-js': 0.1.86
-      '@axiom-crypto/halo2-wasm': 0.1.51
-      '@axiom-crypto/tools': 0.3.26
-      axios: 1.5.0
+      '@axiom-crypto/halo2-lib-js': 0.2.10
+      '@axiom-crypto/halo2-wasm': 0.2.7
+      '@axiom-crypto/tools': 0.3.33
+      axios: 1.6.1
       bs58: 5.0.0
-      ethers: 6.8.0
-      merkletreejs: 0.3.10
+      ethers: 6.8.1
+      merkletreejs: 0.3.11
     transitivePeerDependencies:
       - bufferutil
       - debug
       - utf-8-validate
     dev: false
 
-  /@axiom-crypto/halo2-js@0.1.86:
-    resolution: {integrity: sha512-MkpdCaQv6wFQk63SxsFZNDMkmkC6SNZJYzHguSeAgIIt0Ws1L9wblDy14lfm1Ct9hRyR85P53cx00CPVh3yJig==}
+  /@axiom-crypto/halo2-lib-js@0.2.10:
+    resolution: {integrity: sha512-gvO9fqB/w10q0RRoZ+Q9utvcWcDldHqIl4Jf8t9luoI+vXipZlyT8NIStykOvd6g64guymCnMeAv2vvObvHxIA==}
     dependencies:
-      '@axiom-crypto/halo2-wasm': 0.1.51
-      '@axiom-crypto/tools': 0.3.26
-      ethers: 6.8.0
+      '@axiom-crypto/halo2-wasm': 0.2.7
+      ethers: 6.8.1
       prettier: 1.18.2
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
     dev: false
 
-  /@axiom-crypto/halo2-wasm@0.1.51:
-    resolution: {integrity: sha512-Hh+DSGo49UbDHr/tRRx1uCE66vKJIVdEqycIuzGkoZjD189jfJjuE8HgcNmiZMgSvrMeqgLX2mSJSs/9FQmTwQ==}
+  /@axiom-crypto/halo2-wasm@0.2.7:
+    resolution: {integrity: sha512-pmgFCkCJUlFgh5NCLR59WpWIiBegNxBRAAlA2UxPMga1Pba02ynZgf6SW0tbQaezMiWUdTA9SfpeosovcNI6Yg==}
     dev: false
 
-  /@axiom-crypto/tools@0.3.26:
-    resolution: {integrity: sha512-AkHRUbHIY5baGEGqFb/0/Shkzu5fACh1/UNTHlmrbzsVBnRBXbnznvPx14rpN507j1YGyPbzVtqqbdWokh8qIg==}
+  /@axiom-crypto/tools@0.3.33:
+    resolution: {integrity: sha512-1ABAgXIZ2bNqHKTBcYGsL0tNQrX6PLM/1fHnkuT6g4WgHBMCoZuXyuTQK/CdoxsK/L3y253v9YW/5WOD9FI0Og==}
     dependencies:
-      ethers: 6.8.0
+      ethers: 6.8.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -1550,8 +1549,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /axios@1.5.0:
-    resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
+  /axios@1.6.1:
+    resolution: {integrity: sha512-vfBmhDpKafglh0EldBEbVuoe7DyAavGSLWhuSm5ZSEKQnHhBf0xAAwybbNH1IkrJNGnS/VG4I5yxig1pCEXE4g==}
     dependencies:
       follow-redirects: 1.15.3
       form-data: 4.0.0
@@ -1810,8 +1809,8 @@ packages:
       which: 2.0.2
     dev: false
 
-  /crypto-js@3.3.0:
-    resolution: {integrity: sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==}
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
     dev: false
 
   /cssesc@3.0.0:
@@ -2407,8 +2406,8 @@ packages:
       '@scure/bip39': 1.2.1
     dev: false
 
-  /ethers@6.8.0:
-    resolution: {integrity: sha512-zrFbmQRlraM+cU5mE4CZTLBurZTs2gdp2ld0nG/f3ecBK+x6lZ69KSxBqZ4NjclxwfTxl5LeNufcBbMsTdY53Q==}
+  /ethers@6.8.1:
+    resolution: {integrity: sha512-iEKm6zox5h1lDn6scuRWdIdFJUCGg3+/aQWu0F4K0GVyEZiktFkqrJbRjTn1FlYEPz7RKA707D6g5Kdk6j7Ljg==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
@@ -3234,13 +3233,13 @@ packages:
     engines: {node: '>= 8'}
     dev: false
 
-  /merkletreejs@0.3.10:
-    resolution: {integrity: sha512-lin42tKfRdkW+6iE5pjtQ9BnH+1Hk3sJ5Fn9hUUSjcXRcJbSISHgPCfYvMNEXiNqZPhz/TyRPEV30qgnujsQ7A==}
+  /merkletreejs@0.3.11:
+    resolution: {integrity: sha512-LJKTl4iVNTndhL+3Uz/tfkjD0klIWsHlUzgtuNnNrsf7bAlXR30m+xYB7lHr5Z/l6e/yAIsr26Dabx6Buo4VGQ==}
     engines: {node: '>= 7.6.0'}
     dependencies:
       bignumber.js: 9.1.2
       buffer-reverse: 1.0.1
-      crypto-js: 3.3.0
+      crypto-js: 4.2.0
       treeify: 1.1.0
       web3-utils: 1.10.2
     dev: false
