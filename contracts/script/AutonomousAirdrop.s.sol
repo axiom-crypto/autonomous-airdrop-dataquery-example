@@ -6,7 +6,7 @@ import { AutonomousAirdrop } from '../src/AutonomousAirdrop.sol';
 import { UselessToken } from '../src/UselessToken.sol';
 
 contract AutonomousAirdropScript is Script {
-    address public constant AXIOM_V2_QUERY_GOERLI_ADDR = 0x28CeE427fCD58e5EF1cE4C93F877b621E2Db66df;
+    address public constant AXIOM_V2_QUERY_GOERLI_MOCK_ADDR = 0xf15cc7B983749686Cd1eCca656C3D3E46407DC1f;
     bytes32 public constant DATA_QUERY_QUERY_SCHEMA = bytes32(0);
 
     function setUp() public {}
@@ -15,7 +15,7 @@ contract AutonomousAirdropScript is Script {
         vm.startBroadcast();
 
         AutonomousAirdrop aa = new AutonomousAirdrop(
-            AXIOM_V2_QUERY_GOERLI_ADDR,
+            AXIOM_V2_QUERY_GOERLI_MOCK_ADDR,
             5,
             DATA_QUERY_QUERY_SCHEMA
         );

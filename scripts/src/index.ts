@@ -7,7 +7,7 @@ import {
   buildReceiptSubquery,
   buildTxSubquery,
   bytes32,
-} from '@axiom-crypto/experimental';
+} from '@axiom-crypto/core';
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -87,7 +87,7 @@ async function sendQuery(swapEvent: any) {
   const builtQuery = await query.build();
 
   // Calculate the payment
-  const payment = query.calculateFee();
+  const payment = await query.calculateFee();
 
   console.log("dataQuery:", builtQuery.dataQuery);
 
